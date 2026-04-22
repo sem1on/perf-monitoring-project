@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # Наше FastAPI приложение
+  api:
+    build: ./api
+    container_name: perf-api
+    ports:
+      - "8000:8000"
+    networks:
+      - monitoring-net
+    restart: unless-stopped
+
+  # InfluxDB — база данных для метрик
+  influxdb:
+    image: influxdb:1.8
+    container_name: perf-influxdb
+    ports:
+      - "8086:8086"
+    environment:
+      - INFLUXDB_DB=k6
+      - INFLUXDB_ADMIN_USER=admin
+      - INFLUXDB_ADMIN_PASSWORD=admin
+      - INFLUXDB_HTTP_AUTH_ENABLED=false
+    volumes:
+      - ./influxdb/data:/var/lib/influxdb
+      - ./influxdb/init:/docker-entrypoint-initdb.d
+    networks:
+      - monitoring-net
+    restart: unless-stopped
+
+  # Grafana — визуализация метрик
+  grafana:
+    image: grafana/grafana:latest
+    container_name: perf-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./grafana/data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    depends_on:
+      - influxdb
+    networks:
+      - monitoring-net
+    restart: unless-stopped
+
+networks:
+  monitoring-net:
+    driver: bridge

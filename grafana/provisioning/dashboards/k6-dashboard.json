@@ -1,0 +1,20 @@
+{
+  "dashboard": {
+    "title": "k6 Performance Dashboard",
+    "timezone": "browser",
+    "panels": [
+      {
+        "title": "Requests Per Second",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+        "targets": [
+          {
+            "query": "SELECT count(\"value\") FROM \"http_reqs\" WHERE $timeFilter GROUP BY time($__interval) fill(null)"
+          }
+        ]
+      }
+    ],
+    "time": {"from": "now-5m", "to": "now"},
+    "refresh": "5s"
+  }
+}
