@@ -52,6 +52,15 @@ services:
       - monitoring-net
     restart: unless-stopped
 
+  pushgateway:
+    image: prom/pushgateway:latest
+    container_name: perf-pushgateway
+    ports:
+      - "9091:9091"
+    networks:
+      - monitoring-net
+    restart: unless-stopped
+
 networks:
   monitoring-net:
     driver: bridge

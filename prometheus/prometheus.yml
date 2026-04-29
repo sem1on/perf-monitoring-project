@@ -1,18 +1,8 @@
 global:
   scrape_interval: 15s
-  evaluation_interval: 15s
-
-# Разрешаем remote write от k6
-remote_write:
-  - url: http://prometheus:9090/api/v1/write
 
 scrape_configs:
-  # Настраиваем Prometheus на самосбор метрик
-  - job_name: 'prometheus'
+  - job_name: 'pushgateway'
+    honor_labels: true
     static_configs:
-      - targets: ['localhost:9090']
-  
-  # Можно добавить сбор метрик с нашего API (если добавим /metrics)
-  - job_name: 'perf-api'
-    static_configs:
-      - targets: ['api:8000']
+      - targets: ['pushgateway:9091']

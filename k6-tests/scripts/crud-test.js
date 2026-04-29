@@ -12,6 +12,11 @@ export const options = {
         http_req_duration: ['p(95)<500'],
         http_req_failed: ['rate<0.05'],
     },
+    experimental: {
+        prometheusrw: {
+            flush: true,          // <-- Это решает проблему
+        },
+    },
 };
 
 const BASE_URL = 'http://localhost:8000';
